@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartChef - AI Recipe Generator</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      :root {
+        --primary-color: #ff6b6b;
+        --secondary-color: #4ecdc4;
+        --background-color: #f8f9fa;
+        --text-color: #2d3436;
+      }
+
+      body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        line-height: 1.6;
+      }
+
+      header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        padding: 0.5rem 1rem;
+        height: 60px; /* Decreased from 150px */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      header h1 {
+        color: white;
+        font-size: 1.4rem; /* Decreased from 1.8rem */
+        margin-bottom: 0; /* Removed bottom margin */
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 1rem; /* Decreased from 2rem */
+        flex-wrap: nowrap; /* Prevent wrapping */
+        margin: 0; /* Remove default margin */
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.25rem 0.5rem; /* Decreased padding */
+        border-radius: 15px; /* Decreased from 20px */
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem; /* Decreased from 0.5rem */
+        font-size: 0.9rem; /* Added to decrease font size */
+      }
+
+      .logo {
+        width: 150px; /* Decreased from 120px */
+        height: auto;
+        margin-right: 10px; /* Decreased from 15px */
+      }
+
+      .hero {
+        position: relative;
+        background: none; /* Remove previous background */
+        color: white;
+        text-align: center;
+        padding: 6rem 2rem;
+        margin-bottom: 4rem;
+        overflow: hidden; /* Ensure video doesn't overflow */
+        background-color: #2f2d2db8;
+      }
+      .hero-content {
+        position: relative;
+        z-index: 2; /* Ensure content is above the video */
+      }
+      .hero-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.5; /* Adjust opacity as needed */
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(
+          0,
+          0,
+          0,
+          0.5
+        ); /* Dark overlay for better readability */
+        z-index: 1;
+      }
+
+      .hero h2 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        animation: fadeIn 1s ease-out;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: fadeIn 1s ease-out 0.3s backwards;
+      }
+
+      .hero button {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+      }
+
+      .hero button:hover {
+        background: #ff5252;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      }
+
+      .features {
+        max-width: 1200px;
+        margin: 4rem auto;
+        padding: 2rem;
+      }
+
+      .features h2 {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2rem;
+      }
+
+      .feature-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .feature-item {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+        animation: fadeIn 1s ease-out;
+      }
+
+      .feature-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+      .feature-item:hover i {
+        transform: scale(1.2);
+      }
+
+      .feature-item i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+      }
+      .step {
+        text-align: center;
+        padding: 2rem;
+        transition: transform 0.3s ease;
+        animation: fadeIn 1s ease-out;
+      }
+
+      .step:hover {
+        transform: scale(1.05);
+      }
+
+      .feature-item h3 {
+        margin-bottom: 1rem;
+        color: var(--text-color);
+      }
+
+      .testimonials {
+        background: white;
+        padding: 4rem 2rem;
+      }
+
+      .testimonials h2 {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2rem;
+      }
+
+      .testimonial-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .testimonial-item {
+        background: var(--background-color);
+        padding: 2rem;
+        border-radius: 15px;
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 1s ease-out;
+      }
+      .testimonial-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .testimonial-item img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-bottom: 1rem;
+      }
+
+      .testimonial-item .quote {
+        font-style: italic;
+        margin-bottom: 1rem;
+      }
+
+      .testimonial-item .author {
+        color: var(--primary-color);
+        font-weight: bold;
+      }
+
+      .how-it-works {
+        max-width: 1200px;
+        margin: 4rem auto;
+        padding: 2rem;
+      }
+
+      .how-it-works h2 {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2rem;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+
+      .step {
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .step i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .newsletter {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+      }
+
+      .newsletter h2 {
+        margin-bottom: 1rem;
+        font-size: 2rem;
+      }
+
+      .newsletter p {
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .newsletter form {
+        display: flex;
+        gap: 1rem;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .newsletter input {
+        flex: 1;
+        padding: 1rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+      }
+
+      .newsletter button {
+        background: var(--text-color);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .newsletter button:hover {
+        background: #1a1a1a;
+        transform: translateY(-2px);
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        animation: fadeIn 1s ease-out;
+      }
+
+      footer .logo {
+        width: 130px;
+        height: auto;
+
+        transition: transform 0.3s ease;
+      }
+
+      footer .logo:hover {
+        transform: rotate(360deg);
+      }
+
+      header h1 {
+        display: flex;
+        align-items: center;
+        font-size: 2rem; /* Increased from 1.8rem to balance with larger logo */
+      }
+
+      .hero-logo {
+        width: 240px; /* Increased from 128px */
+        height: auto;
+        margin-bottom: 10px; /* Increased from 20px for better spacing */
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem;
+        background: black;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        animation: fadeIn 1s ease-out;
+      }
+
+      footer .logo {
+        width: 130px;
+        height: auto;
+        transition: transform 0.3s ease;
+      }
+
+      footer .logo:hover {
+        transform: rotate(360deg);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding: 1rem;
+        }
+
+        nav ul {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .hero h2 {
+          font-size: 2rem;
+        }
+
+        .newsletter form {
+          flex-direction: column;
+        }
+      }
+      @media (max-width: 768px) {
+        header {
+          flex-direction: column;
+          height: auto;
+          padding: 0.5rem;
+        }
+
+        nav ul {
+          flex-direction: row;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-top: 0.5rem;
+        }
+
+        nav a {
+          padding: 0.2rem 0.4rem;
+          font-size: 0.8rem;
+        }
+      }
+      /* About Us Section */
+      .about-us {
+        background-color: #202121; /* Dark gray background */
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+      }
+
+      .about-us h2 {
+        margin-bottom: 3rem;
+        font-size: 2rem;
+      }
+
+      .team {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(580px, 1fr));
+        gap: 2rem;
+        max-width: 2800px;
+        margin: 0 auto;
+      }
+
+      .team-member {
+        display: flex;
+        background-color: #444; /* Slightly lighter gray for the member card */
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .team-member:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .team-member-image {
+        flex: 1;
+      }
+
+      .team-member-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(100%); /* Black and white filter */
+        transition: filter 0.3s ease;
+      }
+
+      .team-member:hover .team-member-image img {
+        filter: grayscale(0%); /* Remove black and white filter on hover */
+      }
+
+      .team-member-info {
+        flex: 2;
+        padding: 1.5rem;
+        text-align: left;
+      }
+
+      .team-member-info h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+      }
+
+      .team-member-info p {
+        margin-bottom: 0.5rem;
+      }
+      .team-member-socials {
+        margin-top: 1rem;
+        text-align: center; /* Center the icons */
+      }
+
+      .team-member-socials a {
+        margin: 0 10px; /* Add space between the icons */
+        color: #acaaaa; /* Default icon color */
+        font-size: 1.5rem; /* Adjust icon size */
+        transition: color 0.3s ease;
+        text-decoration: none;
+      }
+
+      .team-member-socials a:hover {
+        color: var(--primary-color); /* Change color on hover */
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header1">
+      <h1>
+        <img src="logo.png" alt="SmartChef Logo" class="logo" />
+        SmartChef
+      </h1>
+      <nav>
+        <ul>
+          <li>
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+          </li>
+          <li>
+            <a href="generate.html"
+              ><i class="fas fa-magic"></i> AI Recipe Generator</a
+            >
+          </li>
+          <li>
+            <a href="explore.html"
+              ><i class="fas fa-search"></i> Explore Recipes</a
+            >
+          </li>
+          <li>
+            <a href="signup.html"><i class="fas fa-user-plus"></i> Signup</a>
+          </li>
+          <li>
+            <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <video class="hero-video" autoplay loop muted playsinline>
+        <source
+          src="../VIDEO_380049e3-92b5-4033-9fe3-b7a3f2ebeba3.mp4"
+          type="video/mp4"
+        />
+        Your browser does not support the video tag.
+      </video>
+      <div class="hero-content">
+        <img src="logo.png" alt="SmartChef Logo" class="hero-logo" />
+        <h2>Transform Your Kitchen with AI</h2>
+        <p>
+          Turn your available ingredients into delicious recipes instantly with
+          our advanced AI technology. No more wasted food or boring meals!
+        </p>
+        <button onclick="window.location.href='generate.html'">
+          <i class="fas fa-magic"></i> Start Creating Recipes
+        </button>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2>Why Choose SmartChef?</h2>
+      <div class="feature-list">
+        <div class="feature-item">
+          <i class="fas fa-brain"></i>
+          <h3>Smart Recipe Generation</h3>
+          <p>
+            Our AI analyzes thousands of recipes to create unique, delicious
+            combinations tailored to your ingredients and preferences.
+          </p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-heart"></i>
+          <h3>Personalized Nutrition</h3>
+          <p>
+            Get recipes that match your dietary requirements, allergies, and
+            health goals with detailed nutritional information.
+          </p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-leaf"></i>
+          <h3>Sustainable Cooking</h3>
+          <p>
+            Reduce food waste by creating recipes with ingredients you already
+            have in your kitchen.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="how-it-works">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <i class="fas fa-list"></i>
+          <h3>1. Input Ingredients</h3>
+          <p>Tell us what ingredients you have available in your kitchen.</p>
+        </div>
+        <div class="step">
+          <i class="fas fa-sliders-h"></i>
+          <h3>2. Set Preferences</h3>
+          <p>Choose your dietary requirements and cooking preferences.</p>
+        </div>
+        <div class="step">
+          <i class="fas fa-wand-magic-sparkles"></i>
+          <h3>3. Generate Recipe</h3>
+          <p>Let our AI create the perfect recipe for you in seconds.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <h2>What Our Community Says</h2>
+      <div class="testimonial-list">
+        <div class="testimonial-item">
+          <img src="sarah.jpeg" alt="User Avatar" />
+          <p class="quote">
+            "SmartChef has revolutionized my meal planning. I've discovered
+            amazing recipes I never would have thought of myself!"
+          </p>
+          <p class="author">- Sarah Johnson, Food Blogger</p>
+        </div>
+        <div class="testimonial-item">
+          <img src="micheal.webp" alt="User Avatar" />
+          <p class="quote">
+            "As a busy parent, this app has been a lifesaver. Quick, healthy
+            meals using what I have at home!"
+          </p>
+          <p class="author">- Michael Chen, Parent</p>
+        </div>
+        <div class="testimonial-item">
+          <img src="emma.webp" alt="User Avatar" />
+          <p class="quote">
+            "The personalized nutrition features help me stay on track with my
+            fitness goals while enjoying delicious meals."
+          </p>
+          <p class="author">- Emma Davis, Fitness Enthusiast</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="newsletter">
+      <h2>Join Our Culinary Community</h2>
+      <p>
+        Subscribe to receive weekly AI-generated recipe collections, cooking
+        tips, and exclusive features.
+      </p>
+      <form action="/subscribe" method="post">
+        <input
+          type="email"
+          name="email"
+          placeholder="Enter your email address"
+          required
+        />
+        <button type="submit">
+          <i class="fas fa-paper-plane"></i> Subscribe
+        </button>
+      </form>
+    </section>
+    <section class="about-us">
+      <h2>About Us</h2>
+      <div class="team">
+        <div class="team-member">
+          <div class="team-member-image">
+            <img src="team-member1.jpg" alt="Team Member 1" />
+          </div>
+          <div class="team-member-info">
+            <h3>John Doe</h3>
+            <p>CEO & Founder</p>
+            <p>
+              John is the visionary behind SmartChef. With years of experience
+              in the tech and culinary world, he aims to revolutionize how
+              people cook.
+            </p>
+            <div class="team-member-socials">
+              <a href="https://www.instagram.com/yourprofile" target="_blank">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="https://github.com/yourprofile" target="_blank">
+                <i class="fab fa-github"></i>
+              </a>
+              <a href="https://www.linkedin.com/in/yourprofile" target="_blank">
+                <i class="fab fa-linkedin"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-member">
+          <div class="team-member-image">
+            <img
+              src="./gyanendra-645-126-removebg-preview__2_-removebg-preview.png"
+              alt="Team Member 2"
+            />
+          </div>
+          <div class="team-member-info">
+            <h3>Gyanendra Prakash</h3>
+            <p>Fullstack Devloper</p>
+            <p>
+              I'm a full-stack developer , I worked on the recommendation system
+              and backend.
+            </p>
+            <div class="team-member-socials">
+              <a href="https://www.instagram.com/yourprofile" target="_blank">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="https://github.com/yourprofile" target="_blank">
+                <i class="fab fa-github"></i>
+              </a>
+              <a href="https://www.linkedin.com/in/yourprofile" target="_blank">
+                <i class="fab fa-linkedin"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-member">
+          <div class="team-member-image">
+            <img src="team-member3.jpg" alt="Team Member 3" />
+          </div>
+          <div class="team-member-info">
+            <h3>Michael Brown</h3>
+            <p>Lead AI Engineer</p>
+            <p>
+              Michael leads the AI team, constantly improving the recipe
+              generator’s ability to create unique and delicious meals using
+              cutting-edge technology.
+            </p>
+            <div class="team-member-socials">
+              <a href="https://www.instagram.com/yourprofile" target="_blank">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="https://github.com/yourprofile" target="_blank">
+                <i class="fab fa-github"></i>
+              </a>
+              <a href="https://www.linkedin.com/in/yourprofile" target="_blank">
+                <i class="fab fa-linkedin"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <img src="./logo.png" alt="SmartChef Logo" class="logo" />
+      <p>
+        © 2024 SmartChef. All rights reserved. | Made with
+        <i class="fas fa-heart" style="color: white"></i> for food lovers
+      </p>
+    </footer>
+  </body>
+</html>
