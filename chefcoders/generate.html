@@ -15,7 +15,9 @@
         box-sizing: border-box;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
-
+      body {
+        background-color: #faf0e6;
+      }
       :root {
         --primary-color: #ff6b6b;
         --secondary-color: #4ecdc4;
@@ -128,17 +130,12 @@
       }
 
       body {
-        background-color: var(--background-color);
         color: var(--text-color);
         line-height: 1.6;
       }
 
       header {
-        background: linear-gradient(
-          135deg,
-          var(--primary-color),
-          var(--secondary-color)
-        );
+        background: #352f44;
         padding: 1rem 2rem;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
@@ -248,6 +245,8 @@
 
       .results-section {
         margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
       }
 
       .results-section h2 {
@@ -267,6 +266,10 @@
         overflow: hidden;
         transition: transform 0.3s ease;
         animation: fadeIn 0.5s ease-out;
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        margin-left: 150px;
       }
 
       .recipe-card:hover {
