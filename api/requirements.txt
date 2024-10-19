@@ -1,0 +1,12 @@
+Flask
+pandas
+numpy
+nltk
+scikit-learn
+SQLAlchemy
+spacy
+bcrypt
+uuid
+gunicorn
+psycopg2
+Flask-Cors
